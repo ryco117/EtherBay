@@ -1,0 +1,51 @@
+<html>
+<head>
+  <title>EtherBay</title>
+  <h1>EtherBay</h1>
+</head>
+<body>
+  <p>
+    A "proof-of-interest" model for requesting digital content to be created and distributed, with incentivization for content acceptance. <br/>
+	  The content can then be freely distributed using an immutable IPFS link (hash).
+  </p>
+  <br/>
+  <h2>Create a Content Request</h2>
+  <br/>
+  <label for="reqTitle">Title:</label><input type="text" id="reqTitle" placeholder="e.g., Vancouver Sunset Wallpaper"></input>
+  <br/>
+  <label for="reqDesc">Description:</label><textarea type="text" id="reqDesc" placeholder="e.g., A 4K 16:9 photo of a sunset in Vancouver"
+                                                  cols="62" rows="5"></textarea>
+  <br/><button id="submitContentRequest" onclick="App.submitRequest()">Submit Content Request</button>
+  <br/>
+  <br/>
+  <br/>
+  <h2>Promise to Back a Request</h2>
+  <br/>
+  <label for="backAmount">Back Amount:</label><input type="text" id="backAmount" placeholder="e.g., 0.1"></input> &Xi;
+  <br/>
+  <span class="hint"><strong>Hint:</strong> 20% of this value will be returned as a deposit for accepting content.</span>
+  <br/>
+  <span id="status"></span>
+  <br/>
+  <br/>
+  <br/>
+  <table class="bayTable" id="tableOfRequests">
+	  <thead>
+      <tr>
+        <th>Content Description</th>
+        <th>Submissions</th>
+        <th>Total &Xi; Backing</th>
+        <th>Back Request</th>
+        <th>&Xi; You've Backed</th>
+      </tr>
+    </thead>
+    <tfoot>
+
+    </tfoot>
+  </table>
+
+</body>
+<footer>
+  <span class="hint"><strong>Hint:</strong> open the browser developer console to view any errors and warnings.</span>
+</footer>
+</html>                          

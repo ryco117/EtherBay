@@ -1,0 +1,53 @@
+<html>
+<head>
+  <title>EtherBay Request</title>
+  <h1 id="requestTitle"></h1>
+</head>
+<body>
+  <p id="requestDescription"></p>
+  <h2>
+    <label for="myBackedAmnt">Amount you've backed:</label><span id="myBackedAmnt"></span> &Xi;
+    <br/>
+    <br/>
+    <label for="totalBackingAmnt">Total amount backed:</label><span id="totalBackingAmnt"></span> &Xi;
+  </h2>
+  <br/>
+  <br/>
+  <br/>
+  <h2>Promise to Back This Request</h2>
+  <br/>
+  <label for="backAmount">Back Amount:</label><input type="text" id="backAmount" placeholder="e.g., 0.1"></input> &Xi;
+  <br/>
+  <span class="hint"><strong>Hint:</strong> 20% of this value will be returned as a deposit for accepting content.</span>
+  <br/>
+  <button id="backRequest" onclick="App.backRequest()">Back Request</button>
+  <br/>
+  <br/>
+  <br/>
+  <h2>Submit Content</h2>
+  <br/>
+  <label for="submissionHash">Content Hash:</label><input type="text" id="submissionHash" placeholder="e.g., QmdPz4GsQbKeNf6wMgSiN1KqSSYH5iGUUNJ681tqcnT93A"></input>
+  <br/>
+  <button id="submitContent" onclick="App.submitContent()">Submit Content</button>
+  <span id="status"></span>
+  <br/>
+  <br/>
+  <br/>
+  <h2>Submissions</h2>
+  <table class="bayTable" id="tableOfSubmissions">
+	  <thead>
+      <tr>
+        <th>Content Hash</th>
+        <th>Validations</th>
+        <th>Accept Content</th>
+      </tr>
+    </thead>
+    <tfoot>
+    </tfoot>
+  </table>
+</body>
+<footer>
+  <span class="hint"><strong>Hint:</strong> open the browser developer console to view any errors and warnings.</span>
+</footer>
+</html>
+
