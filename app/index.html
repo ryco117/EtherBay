@@ -9,23 +9,43 @@
 	  The content can then be freely distributed using an immutable IPFS link (hash).
   </p>
   <br/>
+  <h2>Donate Permanent Content Link</h2>
+  <br/>
+  <label for="donTitle">Title:</label>
+  <input type="text" id="donTitle" placeholder="e.g., Vancouver Sunset Wallpaper"></input>
+  <br/>
+  <label for="donDesc">Description:</label>
+  <textarea type="text" id="donDesc" placeholder="e.g., A 4K 16:9 photo of a sunset in Vancouver"
+    cols="60" rows="5"></textarea>
+  <br/>
+  <label for="donHash">Content Hash:</label>
+  <input type="text" id="donHash" placeholder="e.g., QmdPz4GsQbKeNf6wMgSiN1KqSSYH5iGUUNJ681tqcnT93A"></input>
+  <br/>
+  <button id="submitContent" onclick="App.submitContent()">Submit Content</button>
+  <br/>
+  <a href="freebies.html">View donated links!</a>
+  <br/>
+  <br/>
+  <br/>
   <h2>Create a Content Request</h2>
   <br/>
-  <label for="reqTitle">Title:</label><input type="text" id="reqTitle" placeholder="e.g., Vancouver Sunset Wallpaper"></input>
+  <label for="reqTitle">Title:</label>
+    <input type="text" id="reqTitle" placeholder="e.g., Vancouver Sunset Wallpaper"></input>
   <br/>
-  <label for="reqDesc">Description:</label><textarea type="text" id="reqDesc" placeholder="e.g., A 4K 16:9 photo of a sunset in Vancouver"
-                                                  cols="62" rows="5"></textarea>
-  <br/><button id="submitContentRequest" onclick="App.submitRequest()">Submit Content Request</button>
+  <label for="reqDesc">Description:</label>
+    <textarea type="text" id="reqDesc" placeholder="e.g., A 4K 16:9 photo of a sunset in Vancouver"
+      cols="60" rows="5"></textarea>
+  <br/>
+  <button id="submitContentRequest" onclick="App.submitRequest()">Submit Content Request</button>
   <br/>
   <br/>
   <br/>
   <h2>Promise to Back a Request</h2>
   <br/>
-  <label for="backAmount">Back Amount:</label><input type="text" id="backAmount" placeholder="e.g., 0.1"></input> &Xi;
+  <label for="backAmount">Back Amount:</label>
+  <input type="text" id="backAmount" placeholder="e.g., 0.1"></input> &Xi;
   <br/>
-  <span class="hint"><strong>Hint:</strong> 20% of this value will be returned as a deposit for accepting content.</span>
-  <br/>
-  <span id="status"></span>
+  <span class="hint"><strong>Hint:</strong> 50% of this value will be returned as a deposit for accepting content.</span>
   <br/>
   <br/>
   <br/>
@@ -40,12 +60,14 @@
       </tr>
     </thead>
     <tfoot>
-
     </tfoot>
   </table>
-
 </body>
 <footer>
-  <span class="hint"><strong>Hint:</strong> open the browser developer console to view any errors and warnings.</span>
+  <span id="status"></span>
+  <br/>
+  <span class="hint">
+    <strong>Hint:</strong> open the browser developer console to view any errors and warnings.
+  </span>
 </footer>
 </html>                          

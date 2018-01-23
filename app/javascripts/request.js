@@ -24,6 +24,8 @@ const STATUS_STRING_MAP = {
 };
 
 window.App = {
+  ipfs: {},
+
   start: function() {
     var self = this;
 
@@ -45,6 +47,8 @@ window.App = {
       accounts = accs;
       account = accounts[0];
 
+      self.setStatus("Connecting to IPFS gateway...");
+      self.ipfs = new ipfsApi({host: 'localhost', port: 5001, protocol: 'http'});
       self.renderPage();
     });
   },
@@ -54,12 +58,15 @@ window.App = {
     status.innerHTML = message;
   },
 
+  setErrorStatus: function(message) {
+    var status = document.getElementById("status");
+    status.innerHTML = "<b>" + message + "</b>";
+    console.error(message);
+  },
+
   renderPage: function() {
     var self = this;
     var submissionsTable = document.getElementById("tableOfSubmissions");
-
-    self.setStatus("Connecting to IPFS gateway...");
-    var ipfs = new ipfsApi({host: 'localhost', port: 5001, protocol: 'http'});
 
     var requestId = (new URL(window.location)).searchParams.get("id");
     var request = EtherBayRequest.at(requestId);
@@ -67,18 +74,22 @@ window.App = {
 
     // Get EtherBay Request info
     request.descriptionHash.call().then(function(descriptionHash) {
-      ipfs.cat(descriptionHash, function(err, objStr) {
+      self.ipfs.cat(descriptionHash, function(err, objStr) {
         if(err) {
           self.setStatus("Error accepting content: " + e);
           throw err;
         }
 
         var requestDesc = JSON.parse(objStr);
+        if(typeof(requestDesc.title) === "unknown" ||
+          typeof(requestDesc.description) === "unknown") {
+          throw "Not a request object";
+        }
         document.getElementById("requestTitle").innerHTML = requestDesc.title;
         document.getElementById("requestDescription").innerHTML = requestDesc.description;
 	    });
 	  }).catch(function(e) {
-      console.log(e);
+      self.setErrorStatus("Error fetching request descriptioon hash: " + e.toString());
     });
 
     // Get amount this account has backed
@@ -114,7 +125,7 @@ window.App = {
             hashCell.innerHTML = contentHash;
             numAcceptsCell.innerHTML = backers
             if(didWeBackRequest > 0) {
-              acceptBttnCell.innerHTML = "<button onclick=\"App.acceptRequest(" +
+              acceptBttnCell.innerHTML = "<button onclick=\"App.acceptContent(" +
                 i + ")\">Accept</button>";
             }
             self.setStatus("");
@@ -175,7 +186,7 @@ window.App = {
     });
   },
 
-  acceptRequest: function(contentIndex) {
+  acceptContent: function(contentIndex) {
     var self = this;
     var requestId = (new URL(window.location)).searchParams.get("id");
     var request = EtherBayRequest.at(requestId);

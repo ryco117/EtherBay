@@ -75,17 +75,51 @@ window.App = {
     console.error(message);
   },
 
+  submitContent: function() {
+    var self = this;
+    var donTitle = document.getElementById("donTitle").value;
+    var donDesc = document.getElementById("donDesc").value;
+    var donHash = document.getElementById("donHash").value;
+    var donationParamFile = {
+      title: donTitle,
+      description: donDesc,
+      hash: donHash
+    };
+
+    self.setStatus("Adding file to IPFS...");
+    self.ipfs.add(JSON.stringify(donationParamFile), function (err, hash) {
+      EtherBay.deployed().then(function(etherBay) {
+        self.setStatus("Adding donation to blockchain...");
+        return etherBay.newDonation(hash, {from: account}).then(function(txId) {
+          self.setStatus("Success! Added hash: " + hash + " to the blockchain!");
+        }).catch(function(e) {
+          // There was an error! Handle it.
+          console.log(e);
+          self.setStatus("Error adding content: " + e);
+        });
+      }).catch(function(e) {
+        console.log(e);
+        self.setStatus("Error adding content: " + e);
+      });
+    });
+  },
+
   submitRequest: function() {
     var self = this;
     var reqTitle = document.getElementById("reqTitle").value;
     var reqDesc = document.getElementById("reqDesc").value;
-    var requestFile = {
+    var requestParamFile = {
       title: reqTitle,
       description: reqDesc
     };
 
-    self.setStatus("Adding file to IPFS...");
-    self.ipfs.add(JSON.stringify(requestFile), function (err, hash) {
+    self.setStatus("Adding parameters to IPFS...");
+    self.ipfs.add(JSON.stringify(requestParamFile), function (err, hash) {
+      if(err) {
+        self.setErrorStatus("Error adding parameters to IPFS: " + err.toString());
+        throw err;
+      }
+
       var etherBay;
       EtherBay.deployed().then(function(instance) {
         etherBay = instance;
@@ -94,13 +128,10 @@ window.App = {
         return etherBay.newRequest(hash, {from: account}).then(function(txId) {
           self.setStatus("Success! Added hash: " + hash + " to the blockchain!");
         }).catch(function(e) {
-          // There was an error! Handle it.
-          console.log(e);
-          self.setStatus("Error adding request: " + e);
+          self.setErrorStatus("Error adding request: " + e);
         });
       }).catch(function(e) {
-        console.log(e);
-        self.setStatus("Error adding request: " + e);
+        self.setErrorStatus("Error adding request: " + e);
       });
     });
   },
@@ -121,6 +152,7 @@ window.App = {
       self.ipfs.cat(descriptionHash, function(err, objStr) {
         if(err) {
           self.setErrorStatus("Error fetching from IPFS: " + err.toString());
+          throw err;
         }
 
         var requestDesc = JSON.parse(objStr);
@@ -130,7 +162,7 @@ window.App = {
           submissionsCell.innerHTML = numberSubmissions;
           web3.eth.getBalance(request.address, function(err, requestEthBalance) {
             currentBackingCell.innerHTML = web3.fromWei(requestEthBalance);
-            backBttnCell.innerHTML = "<button onclick=\"App.backRequest(\'" + requestId + "\')\">+</button>";
+            backBttnCell.innerHTML = "<button onclick=\"App.backRequest(\'" + requestId + "\')\">+&Xi;</button>";
           });
         }).catch(function(e) {
           self.setErrorStatus("Error retrieving request submissions: " + e);
@@ -156,8 +188,8 @@ window.App = {
       // Get number of requests in blockchain
       etherBay.getTotalRequests().then(function(totalRequests) {
       	console.log("Requests count: " + totalRequests);
-        var l = totalRequests.toNumber() - 1;
-        var maxIter = (l >= 50) ? 50 : l+1;
+        const total = totalRequests.toNumber();
+        var maxIter = (total > 50) ? 50 : total;
 
         var requestPromises = [];
         for(var i = 0; i < maxIter; i++) {
@@ -191,8 +223,7 @@ window.App = {
       self.setStatus("Success! Backed request: " + requestId + " !");
     }).catch(function(e) {
       // There was an error! Handle it.
-      console.log(e);
-      self.setStatus("Error backing request: " + e);
+      self.setErrorStatus("Error backing request: " + e);
     });
   }
 };
