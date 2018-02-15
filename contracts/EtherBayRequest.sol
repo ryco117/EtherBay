@@ -5,10 +5,10 @@ pragma solidity ^0.4.17;
 contract EtherBayRequest {
     // Constants used in class
     uint MINIMUM_BACKING_VALUE = 0.05 ether;
-    uint REWARD_FRACTION_NUMERATOR = 1;
-    uint REWARD_FRACTION_DENOMINATOR = 2;
+    uint REWARD_FRACTION_NUMERATOR = 9;
+    uint REWARD_FRACTION_DENOMINATOR = 20;      // 45%
     uint RETURN_FRACTION_NUMERATOR = 1;
-    uint RETURN_FRACTION_DENOMINATOR = 2;
+    uint RETURN_FRACTION_DENOMINATOR = 2;       // 50% (5% to contract creator per accept)
 
     // Data for submitting potential content on IPFS
     struct Submission {
@@ -24,9 +24,10 @@ contract EtherBayRequest {
     uint public numberBackers;
     event NewBacking(address, uint);
 
-    // We'll make him special for creating the request for us
-    // Receives any ether left in contract at completion
+    // We'll make him special for creating the request for us (not cheap)
+    // Receives a percentage of all accepted submissions, claimable whenever
     address public creator;
+    uint public totalClaim;
 
     // The IPFS hash-link of the content-request description
     string public descriptionHash;
@@ -34,7 +35,6 @@ contract EtherBayRequest {
     // Construct contract
     function EtherBayRequest(string descHash, address requester) public {
         creator = requester;
-        numberBackers = 0;
         descriptionHash = descHash;
     }
 
@@ -69,7 +69,7 @@ contract EtherBayRequest {
     // Donate ether to back this content request
     function backThisRequest() public hasPayment payable {
         if(backingAmount[msg.sender] == 0) {
-    	    numberBackers += 1;
+            numberBackers += 1;
         }
         backingAmount[msg.sender] += msg.value;
     }
@@ -84,6 +84,9 @@ contract EtherBayRequest {
         // Calculate reward from backer's support
         uint rewardAmount = (REWARD_FRACTION_NUMERATOR * backingAmount[msg.sender]) / REWARD_FRACTION_DENOMINATOR;
         uint returnAmount = (RETURN_FRACTION_NUMERATOR * backingAmount[msg.sender]) / RETURN_FRACTION_DENOMINATOR;
+
+        // Whats left of the ratio goes to the creator of the contract
+        totalClaim += backingAmount[msg.sender] - (rewardAmount + returnAmount);
 
         // Update backer's and submission's status
         backingAmount[msg.sender] = 0;
@@ -105,5 +108,18 @@ contract EtherBayRequest {
     function submitContent(string contentHash) public {
         Submission memory newSubmission = Submission(msg.sender, contentHash, 0);
         submissions.push(newSubmission);
+    }
+
+    // Allow the original requester to collect a percentage of the accepted ether
+    function collectClaim() public {
+        require(msg.sender == creator);
+
+        uint send = totalClaim;
+        totalClaim = 0;
+
+        // Reward creator with their claim
+        if(!msg.sender.send(send)) {
+            revert();
+        }
     }
 }

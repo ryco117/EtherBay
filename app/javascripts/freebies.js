@@ -86,8 +86,7 @@ window.App = {
             var row = donationsTable.insertRow(1);
             var descCell = row.insertCell(0);
             var hashCell = row.insertCell(1);
-            var tipsCountCell = row.insertCell(2);
-            var tipsBttnCell = row.insertCell(3);
+            var tipsBttnCell = row.insertCell(2);
 
             self.ipfs.cat(donationParamHash, function(err, objStr) {
               if(err) {
@@ -103,8 +102,11 @@ window.App = {
               }
               descCell.innerHTML = donationDesc.title.toString();
               hashCell.innerHTML = donationDesc.hash.toString();
+              tipsBttnCell.innerHTML = "<button onclick=\"App.tipDonator('" +
+                donationSrcAddr + "')\">Tip</button>";
             });
           }
+          self.setStatus("");
         }).catch(err => {
           self.setErrorStatus("Error fetching donations: " + err.toString());
         });
@@ -113,6 +115,22 @@ window.App = {
       });
     }).catch(err => {
       self.setErrorStatus("Error connecting to EtherBay contract: " + err.toString());
+    });
+  },
+
+  tipDonator: function(donatorAddress) {
+    var self = this;
+    var tipAmount = document.getElementById("tipAmount").value;
+
+    self.setStatus("Tip content donator by " + tipAmount + " ETH...");
+    var weiAmount = web3.toWei(tipAmount,"ether");
+    web3.eth.sendTransaction({from: account, to: donatorAddress, value: weiAmount}, function(e, txId) {
+      if(e) {
+        self.setErrorStatus("Error tipping account: " + e);
+      }
+      else {
+        self.setStatus("Success! Tipped account: " + donatorAddress + " !");
+      }
     });
   }
 };

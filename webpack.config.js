@@ -4,7 +4,8 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: {
   	index: './app/javascripts/index.js',
-  	request: './app/javascripts/request.js'
+  	request: './app/javascripts/request.js',
+  	freebies: './app/javascripts/freebies.js'
   },
   output: {
     path: path.resolve(__dirname, 'build'),
@@ -20,6 +21,11 @@ module.exports = {
       filename: 'request.html',
       template: 'app/request.html',
       chunks: ['request']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'freebies.html',
+      template: 'app/freebies.html',
+      chunks: ['freebies']
     })
   ],
   module: {

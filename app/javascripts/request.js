@@ -25,9 +25,11 @@ const STATUS_STRING_MAP = {
 
 window.App = {
   ipfs: {},
+  requestId: "",
 
   start: function() {
     var self = this;
+    self.requestId = (new URL(window.location)).searchParams.get("id");
 
     // Bootstrap the MetaCoin abstraction for Use.
     EtherBayRequest.setProvider(web3.currentProvider);
@@ -48,6 +50,7 @@ window.App = {
       account = accounts[0];
 
       self.setStatus("Connecting to IPFS gateway...");
+      // TODO: Allow user to choose IPFS gateway
       self.ipfs = new ipfsApi({host: 'localhost', port: 5001, protocol: 'http'});
       self.renderPage();
     });
@@ -67,9 +70,9 @@ window.App = {
   renderPage: function() {
     var self = this;
     var submissionsTable = document.getElementById("tableOfSubmissions");
+    var creatorsSpan = document.getElementById("creatorsSpan");
 
-    var requestId = (new URL(window.location)).searchParams.get("id");
-    var request = EtherBayRequest.at(requestId);
+    var request = EtherBayRequest.at(self.requestId);
     self.setStatus("Fetching data... (please wait)");
 
     // Get EtherBay Request info
@@ -90,6 +93,20 @@ window.App = {
 	    });
 	  }).catch(function(e) {
       self.setErrorStatus("Error fetching request descriptioon hash: " + e.toString());
+    });
+
+    // If we created this request, allow to claim tax
+    request.creator.call().then(function(requestCreator) {
+      if(account == requestCreator) {
+        request.totalClaim.call().then(function(currentTotalClaim) {
+          creatorsSpan.innerHTML = "Total tax available for claim: " + web3.fromWei(currentTotalClaim) +
+            " &Xi;<br/><button onclick=\"App.collectClaim()\">Claim</button><br/>";
+        }).catch(function(e) {
+          self.setErrorStatus("Error fetching creator's total claim: " + e.toString());
+        });
+      }
+    }).catch(function(e) {
+      self.setErrorStatus("Error fetching request's creator: " + e.toString());
     });
 
     // Get amount this account has backed
@@ -142,7 +159,7 @@ window.App = {
     });
 
     // Get amount that has been backed in total (minus acceptances)
-    web3.eth.getBalance(requestId, function(err, totalBackingAmnt) {
+    web3.eth.getBalance(self.requestId, function(err, totalBackingAmnt) {
       if(err) {
         throw err;
       }
@@ -156,48 +173,51 @@ window.App = {
     var self = this;
     var contentHash = document.getElementById("submissionHash").value;
 
-    var requestId = (new URL(window.location)).searchParams.get("id");
-    var etherBayRequest = EtherBayRequest.at(requestId);
+    var etherBayRequest = EtherBayRequest.at(self.requestId);
 
     self.setStatus("Adding submission to blockchain...");
     return etherBayRequest.submitContent(contentHash, {from: account}).then(function(txId) {
       self.setStatus("Success! Added hash: " + contentHash + " to the blockchain at transaction: " + txId.tx);
     }).catch(function(e) {
-      // There was an error! Handle it.
-      console.log(e);
-      self.setStatus("Error adding request: " + e);
+      self.setErrorStatus("Error adding request: " + e);
     });
   },
 
   backRequest: function() {
     var self = this;
     var backingAmount = document.getElementById("backAmount").value;
-    var requestId = (new URL(window.location)).searchParams.get("id");
-    var request = EtherBayRequest.at(requestId);
+    var request = EtherBayRequest.at(self.requestId);
 
     self.setStatus("Backing request by " + backingAmount + " ETH...");
     var weiAmount = web3.toWei(backingAmount,"ether");
     request.backThisRequest({from: account, value: weiAmount}).then(function(txId) {
-      self.setStatus("Success! Backed request: " + requestId + " !");
+      self.setStatus("Success! Backed request: " + self.requestId + " !");
     }).catch(function(e) {
-      // There was an error! Handle it.
-      console.log(e);
-      self.setStatus("Error backing request: " + e);
+      self.setErrorStatus("Error backing request: " + e);
     });
   },
 
   acceptContent: function(contentIndex) {
     var self = this;
-    var requestId = (new URL(window.location)).searchParams.get("id");
-    var request = EtherBayRequest.at(requestId);
+    var request = EtherBayRequest.at(self.requestId);
 
-    self.setStatus("Validating content");
+    self.setStatus("Validating content...");
     request.validateSubmission(contentIndex, {from: account}).then(function(txId) {
       self.setStatus("Success! Validated content at transaction: " + txId.tx + " !");
     }).catch(function(e) {
-      // There was an error! Handle it.
-      console.log(e);
-      self.setStatus("Error accepting content: " + e);
+      self.setErrorStatus("Error accepting content: " + e);
+    });
+  },
+
+  collectClaim: function() {
+    var self = this;
+    var request = EtherBayRequest.at(self.requestId);
+
+    self.setStatus("Collecting claim...");
+    request.collectClaim({from: account}).then(function(txId) {
+      self.setStatus("Success! Validated content at transaction: " + txId.tx + " !");
+    }).catch(function(e) {
+      self.setErrorStatus("Error collecting claim: " + e);
     });
   }
 };
