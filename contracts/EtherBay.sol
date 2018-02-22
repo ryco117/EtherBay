@@ -1,14 +1,19 @@
 pragma solidity ^0.4.17;
 
 import "./EtherBayRequest.sol";
+import "./EtherBayFlag.sol";
 
 // Master contract to manage all EtherBay requests and donations
+// as well as the creation of ERC-721 compliant EtherBayFlag tokens
 contract EtherBay {
     // EtherBay Members / Definitions
     // ==============================
 
     // Address that initially created this contract
     address public creator;
+
+    // Address of EtherBayFlag contract
+    EtherBayFlag public flagContract;
 
     // Structure defining a donation as a donator and hash of parameters
     struct Freebie {
@@ -53,6 +58,7 @@ contract EtherBay {
 
     function EtherBay() public {
         creator = msg.sender;
+        flagContract = new EtherBayFlag();
     }
 
 
@@ -84,6 +90,9 @@ contract EtherBay {
         uint i = requestsSubmitted.length;
         requestLookup[newRequestAddr] = i;
 
+        // Give A Flag!
+        flagContract.createFlag(msg.sender);
+
         // Signal event that a new request was created at the given address
         Requested(msg.sender, newRequestAddr, requestParamHash);
     }
@@ -101,6 +110,10 @@ contract EtherBay {
     // Make corresponding signals if called from valid source
     function signalRequestBacked(address backingAddr, uint amount)
         public isRequestAddress(msg.sender) {
+
+        // Give A Flag!
+        flagContract.createFlag(backingAddr);
+
         RequestBacked(msg.sender, backingAddr, amount);
     }
     function signalContentValidated(uint contentIndex, address validatingAddr)
@@ -109,13 +122,20 @@ contract EtherBay {
     }
     function signalContentSubmitted(address submittingAddr, uint contentIndex,
         string contentHash) public isRequestAddress(msg.sender) {
+
+        // Give A Flag!
+        flagContract.createFlag(submittingAddr);
+
         ContentSubmitted(submittingAddr, msg.sender, contentIndex, contentHash);
     }
 
-    // Add a new donation entry to our array of Freebiess
+    // Add a new donation entry to our array of Freebies
     function newDonation(string donationParamHash) public {
     	Freebie memory freebie = Freebie(msg.sender, donationParamHash);
         donationsSubmitted.push(freebie);
+
+        // Give A Flag!
+        flagContract.createFlag(msg.sender);
 
         // Signal event
         Donated(msg.sender, donationParamHash);
@@ -130,14 +150,5 @@ contract EtherBay {
     function getDonation(uint i) public constant isDonation(i) returns (address, string) {
         Freebie storage d = donationsSubmitted[i];
         return (d.donator, d.donationParamHash);
-    }
-
-    // I have mixed feelings about this
-    function closeTheBay() public {
-    	// Ensure only the creator can close the contract
-    	// (although without any funds, no reason to do so)
-        require(msg.sender == creator);
-
-        selfdestruct(creator);
     }
 }

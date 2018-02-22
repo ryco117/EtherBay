@@ -3,13 +3,17 @@
 An Ethereum smart contract and website interface for incentivized requesting/distributing of content.
 Smart contracts are used to show users proof-of-interest in requested content, and a refunded deposit
 incentivizes requesters/backers to validate submitted content. IPFS's content-based addressing ensures
-that there is no tampering of the distributed content after its upload.
+that there is no tampering of the distributed content after its upload. It also includes a new ERC-721
+compliant non-fungible token, called Flags, which are distributed to users upon transactons with the
+EtherBay Dapp and are identified by their unique ID and corresponding flag image (which is rendered in
+an HTML canvas).
 
 ## Development Deployment
 
 **Dependencies**:
 * npm
 * ipfs-mini
+* [BigNumber](https://github.com/MikeMcl/bignumber.js/)
 * [ipfs](https://ipfs.io/)
 * [truffle](http://truffleframework.com/)
 

@@ -5,7 +5,8 @@ module.exports = {
   entry: {
   	index: './app/javascripts/index.js',
   	request: './app/javascripts/request.js',
-  	freebies: './app/javascripts/freebies.js'
+  	freebies: './app/javascripts/freebies.js',
+  	flags: './app/javascripts/flags.js'
   },
   output: {
     path: path.resolve(__dirname, 'build'),
@@ -26,6 +27,11 @@ module.exports = {
       filename: 'freebies.html',
       template: 'app/freebies.html',
       chunks: ['freebies']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'flags.html',
+      template: 'app/flags.html',
+      chunks: ['flags']
     })
   ],
   module: {
