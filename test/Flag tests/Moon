@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="300" height="200" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+<script>
+
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+const w = c.width;
+const h = c.height;
+
+const x = w/2;
+const y = h/2;
+const radius = h/4;
+
+ctx.fillStyle = "#f8ff1c";
+ctx.strokeStyle = "#000000";
+ctx.save();
+
+ctx.translate(x, y);
+
+// Moon
+ctx.beginPath();
+ctx.arc(0, 0, radius, Math.PI/2, 3/2*Math.PI);
+ctx.quadraticCurveTo(-0.85*radius, 0, 0, radius);
+ctx.closePath();
+ctx.stroke();
+ctx.fill();
+</script> 
+
+</body>
+</html>
+
