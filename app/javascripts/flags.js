@@ -23,6 +23,7 @@ var ipfsApi = require("ipfs-mini");
 
 // Import Flag Generation
 var flagGeneration = require("./flag-generation");
+var BigNumber = require('bignumber.js');
 
 
 window.App = {
@@ -56,6 +57,29 @@ window.App = {
       self.ipfs = new ipfsApi({host: 'localhost', port: 5001, protocol: 'http'});
       self.renderPage();
     });
+
+    // TEST RENDERING
+    // Generate Fake Flags
+    const all256Bits = new BigNumber("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", 16);
+    var tableOfFakeFlagsElm = document.getElementById("tableOfFakeFlags");
+    for(var i = 0; i < 10; i++) {
+      var newRow = tableOfFakeFlagsElm.insertRow(i+1);
+      var newCanvasCell0 = newRow.insertCell(0);
+      const flagId0 = BigNumber.random().multipliedBy(all256Bits).dividedToIntegerBy(1);
+      const newCanvasId0 = "newCanvas" + flagId0.toString(16);
+      var newCanvas0 = document.createElement('canvas');
+      newCanvas0.id = newCanvasId0;
+      newCanvasCell0.appendChild(newCanvas0);
+      flagGeneration.drawFlagToCanvas(flagId0, newCanvasId0);
+
+      var newCanvasCell1 = newRow.insertCell(1);
+      const flagId1 = BigNumber.random().multipliedBy(all256Bits).dividedToIntegerBy(1);
+      const newCanvasId1 = "newCanvas" + flagId1.toString(16);
+      var newCanvas1 = document.createElement('canvas');
+      newCanvas1.id = newCanvasId1;
+      newCanvasCell1.appendChild(newCanvas1);
+      flagGeneration.drawFlagToCanvas(flagId1, newCanvasId1);
+    }
   },
 
   setStatus: function(message) {
