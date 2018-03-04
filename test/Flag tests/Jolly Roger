@@ -16,7 +16,7 @@ const x = w;
 const y = h;
 
 ctx.fillStyle = "#f0f0f0";
-ctx.strokeStyle = "#0F00F0";
+ctx.strokeStyle = "#000000";
 ctx.save();
 
 ctx.translate(x, y);
@@ -26,8 +26,8 @@ for (var i = 0; i < 4; i++) {
 ctx.beginPath();
 ctx.moveTo(0, 0.1*h);
 ctx.lineTo(-0.4*h, 0.5*h);
-ctx.bezierCurveTo(-0.3*h, 0.4*h, -0.35*h, 0.75*h, -0.55*h, 0.55*h);
-ctx.bezierCurveTo(-0.75*h, 0.35*h, -0.4*h, 0.3*h, -0.5*h, 0.4*h);
+ctx.bezierCurveTo(-0.3*h, 0.6*h, -0.575*h, 0.65*h, -0.5*h, 0.5*h);
+ctx.bezierCurveTo(-0.65*h, 0.575*h, -0.6*h, 0.3*h, -0.5*h, 0.4*h);
 ctx.lineTo(-0.1*h, 0);
 ctx.closePath();
 ctx.stroke();
@@ -44,6 +44,8 @@ ctx.moveTo(-0.3*h, 0);
 ctx.bezierCurveTo(-0.3*h, 0.4*h, 0.3*h, 0.4*h, 0.3*h, 0);
 ctx.bezierCurveTo(0.3*h, 0.15*h, -0.3*h, 0.15*h, -0.3*h, 0);
 ctx.bezierCurveTo(-0.3*h, 0.275*h, 0.3*h, 0.275*h, 0.3*h, 0);
+ctx.bezierCurveTo(0.3*h, 0.15*h, -0.3*h, 0.15*h, -0.3*h, 0);
+ctx.bezierCurveTo(-0.3*h, 0.475*h, 0.3*h, 0.475*h, 0.3*h, 0);
 ctx.closePath();
 ctx.fill();
 ctx.stroke();
@@ -51,9 +53,9 @@ ctx.stroke();
 ctx.beginPath();
 ctx.moveTo(0, 0.3*h);
 ctx.lineTo(0, 0.1*h);
-ctx.moveTo(-0.15*h, 0.25*h);
+ctx.moveTo(-0.15*h, 0.265*h);
 ctx.lineTo(-0.15*h, 0.075*h);
-ctx.moveTo(0.15*h, 0.25*h);
+ctx.moveTo(0.15*h, 0.265*h);
 ctx.lineTo(0.15*h, 0.075*h);
 ctx.stroke();
 
@@ -68,11 +70,12 @@ ctx.stroke();
 // Eyes
 ctx.fillStyle = ctx.strokeStyle;
 ctx.beginPath();
-ctx.ellipse(-0.175*h, -0.175*h, 0.1*h, 0.05*h, Math.PI/8, 0, 2*Math.PI);
-ctx.ellipse(0.175*h, -0.175*h, 0.1*h, 0.05*h, -Math.PI/8, 0, 2*Math.PI);
+ctx.ellipse(-0.175*h, -0.175*h, 0.1*h, 0.075*h, Math.PI/10, 0, 2*Math.PI);
+ctx.ellipse(0.175*h, -0.175*h, 0.1*h, 0.075*h, -Math.PI/10, 0, 2*Math.PI);
 ctx.fill();
 ctx.beginPath();
-ctx.ellipse(0, 0, 0.025*h, 0.075*h, 0, 0, 2*Math.PI);
+//Nose
+ctx.ellipse(0, -0.02*h, 0.05*h, 0.07*h, 0, 0, 2*Math.PI);
 ctx.fill();
 </script> 
 

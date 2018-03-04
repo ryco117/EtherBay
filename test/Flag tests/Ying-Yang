@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="300" height="200" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+
+<script>
+
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+const w = c.width;
+const h = c.height;
+
+const x = w/2;
+const y = h/2;
+const radius = h/4;
+
+ctx.fillStyle = "#ffffff";
+ctx.strokeStyle = "#000000";
+ctx.save();
+
+ctx.translate(x, y);
+
+// Ying
+ctx.beginPath();
+ctx.moveTo(0, -radius);
+ctx.arcTo(25*radius, 0, 0, radius, radius);
+ctx.arcTo(3*radius, radius/2, 0, 0, radius/2);
+ctx.arcTo(-10*radius, -radius/2, 0, -radius, radius/2);
+ctx.closePath();
+ctx.stroke();
+ctx.fill();
+
+// Yang
+const tempColour = ctx.fillStyle;
+ctx.fillStyle = ctx.strokeStyle;
+ctx.strokeStyle = tempColour;
+ctx.beginPath();
+ctx.moveTo(0, -radius);
+ctx.arcTo(-25*radius, 0, 0, radius, radius);
+ctx.arcTo(20*radius, radius/2, 0, 0, radius/2);
+ctx.arcTo(-10*radius, -radius/2, 0, -radius, radius/2);
+ctx.closePath();
+ctx.stroke();
+ctx.fill();
+ctx.beginPath();
+ctx.moveTo(0, -radius/2);
+ctx.arc(0, -radius/2, radius/4, 0, 2*Math.PI);
+ctx.fill();
+ctx.fillStyle = tempColour;
+ctx.beginPath();
+ctx.moveTo(0, radius/2);
+ctx.arc(0, radius/2, radius/4, 0, 2*Math.PI);
+ctx.fill();
+</script> 
+
+</body>
+</html>

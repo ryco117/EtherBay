@@ -14,13 +14,13 @@ const h = c.height;
 
 const x = w/2;
 const y = h/2;
-const radius = h/4;
+const radius = h/4 * 1.25;
 
-ctx.fillStyle = "#abcd45";
-ctx.strokeStyle = "#703005";
+ctx.fillStyle = "#Fb4d45";
+ctx.strokeStyle = "#D0E0D5";
 ctx.save();
 
-ctx.translate(x, y);
+ctx.translate(x, y - 0.25*radius);
 
 // Jewel Outline/Filling
 ctx.beginPath();

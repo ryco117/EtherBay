@@ -24,6 +24,7 @@ var ipfsApi = require("ipfs-mini");
 // Import Flag Generation
 var flagGeneration = require("./flag-generation");
 
+
 window.App = {
   ipfs: {},
 
@@ -109,6 +110,11 @@ window.App = {
     }).catch(function(e) {
       self.setErrorStatus("Error connecting to EtherBay: " + e);
     });
+  },
+
+  generateFakeToken: function() {
+    var flagId = document.getElementById("fakeToken").value;
+    flagGeneration.drawFlagToCanvas(flagId, "testCanvas");
   }
 };
 
