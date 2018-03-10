@@ -17,26 +17,20 @@
   <br/>
   <br/>
   <center>
-    <canvas id="testCanvas" width="720" height="360"
+    <canvas id="mainCanvas" width="720" height="360"
       style="border:1px solid #c3c3c3;">
       Your browser does not support the canvas element.
     </canvas>
   </center>
   <br/>
   <br/>
-  <label for="fakeToken">Fake Token (256 bit hexadecimal number):</label>
-  <input type="text" id="fakeToken" placeholder="e.g., 90D03080903020000000B3D2E1F012340000000000FF0050BBCCDDEEFF00"></input>
-  <br/>
-  <button id="fakeTokenBttn" onclick="App.generateFakeToken()">Back Request</button>
   <br/>
   <br/>
-  <br/>
-  <br/>
-  <table class="bayTable" id="tableOfFakeFlags">
+  <table class="bayTable" id="tableOfFlags">
 	  <thead>
       <tr>
-        <th>Flag Column 1</th>
-        <th>Flag Column 2</th>
+        <th>Flag Wallet</th>
+        <th></th>
       </tr>
     </thead>
     <tfoot>

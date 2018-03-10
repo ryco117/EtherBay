@@ -57,29 +57,6 @@ window.App = {
       self.ipfs = new ipfsApi({host: 'localhost', port: 5001, protocol: 'http'});
       self.renderPage();
     });
-
-    // TEST RENDERING
-    // Generate Fake Flags
-    const all256Bits = new BigNumber("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", 16);
-    var tableOfFakeFlagsElm = document.getElementById("tableOfFakeFlags");
-    for(var i = 0; i < 10; i++) {
-      var newRow = tableOfFakeFlagsElm.insertRow(i+1);
-      var newCanvasCell0 = newRow.insertCell(0);
-      const flagId0 = BigNumber.random().multipliedBy(all256Bits).dividedToIntegerBy(1);
-      const newCanvasId0 = "newCanvas" + flagId0.toString(16);
-      var newCanvas0 = document.createElement('canvas');
-      newCanvas0.id = newCanvasId0;
-      newCanvasCell0.appendChild(newCanvas0);
-      flagGeneration.drawFlagToCanvas(flagId0, newCanvasId0);
-
-      var newCanvasCell1 = newRow.insertCell(1);
-      const flagId1 = BigNumber.random().multipliedBy(all256Bits).dividedToIntegerBy(1);
-      const newCanvasId1 = "newCanvas" + flagId1.toString(16);
-      var newCanvas1 = document.createElement('canvas');
-      newCanvas1.id = newCanvasId1;
-      newCanvasCell1.appendChild(newCanvas1);
-      flagGeneration.drawFlagToCanvas(flagId1, newCanvasId1);
-    }
   },
 
   setStatus: function(message) {
@@ -116,18 +93,44 @@ window.App = {
           flagCount = flagCount.toNumber();
           myFlagAmntElm.innerHTML = flagCount;
           if(flagCount) {
+            // Draw the primary flag in higher res
             etherBayFlags.tokenOfOwnerByIndex(account, 0).then(function(flagId) {
-              console.log("Primary Flag ID: 0x" + flagId.toString(16));
-              drawFlagToCanvas(flagId, "testCanvas");
+              const flagIdStr = flagId.toString(16);
+              console.log("Primary Flag ID: 0x" + flagIdStr);
+              flagGeneration.drawFlagToCanvas(flagIdStr, "mainCanvas");
             }).catch(function(e) {
               self.setErrorStatus("Error retrieving primary flag: " + e);
+            });
+
+            // Draw all owned flags
+            var flagPromises = [];
+            for(var i = 0; i < flagCount; i++) {
+              // Get promises to fetch all flag IDs
+              flagPromises.push(etherBayFlags.tokenOfOwnerByIndex(account, i));
+            }
+            var tableOfFlagsElm = document.getElementById("tableOfFlags");
+            Promise.all(flagPromises).then(function(flagIds) {
+              for(var i = 0; i < flagCount/2; i++) {
+                var newRow = tableOfFlagsElm.insertRow(i+1);
+                for(var j = 0; j < Math.min(flagCount - 2*i, 2); j++) {
+                  var newCanvasCell = newRow.insertCell(j);
+                  var flagId = flagIds[2*i + j].toString(16);
+                  var newCanvas = document.createElement('canvas');
+                  var newFunc = self.makeSwitchPrimaryFlagFunc(2*i + j);
+                  newCanvas.addEventListener('dblclick', newFunc);
+                  newCanvas.id = "newCanvas" + flagId;
+                  newCanvas.style = "border:1px solid #c3c3c3;";
+                  newCanvasCell.appendChild(newCanvas);
+                  flagGeneration.drawFlagToCanvas(flagId, newCanvas.id);
+                }
+              }
             });
           }
         }).catch(function(e) {
           self.setErrorStatus("Error retrieving your flags count: " + e);
         });
       }).catch(function(e) {
-        self.setErrorStatus("Error connecting to EtherBay: " + e);
+        self.setErrorStatus("Error connecting to EtherBayFlags: " + e);
       });
     }).then(() => {
       self.setStatus("");
@@ -136,9 +139,31 @@ window.App = {
     });
   },
 
-  generateFakeToken: function() {
-    var flagId = document.getElementById("fakeToken").value;
-    flagGeneration.drawFlagToCanvas(flagId, "testCanvas");
+  makeSwitchPrimaryFlagFunc(flagIndex) {
+    var self = this;
+    return function() {
+      self.makeFlagPrimary(flagIndex);
+    };
+  },
+
+  makeFlagPrimary: function(flagWalletIndex) {
+    var self = this;
+
+    self.setStatus("Connecting to EtherBay contract...");
+    EtherBay.deployed().then(function(etherBay) {
+      etherBay.flagContract.call().then(function(flagAddr) {
+        var etherBayFlags = EtherBayFlag.at(flagAddr);
+        etherBayFlags.makePrimary(parseInt(flagWalletIndex), {from: account}).then(function(txId) {
+          self.setStatus("Success! Replaced primary flag at transaction: " + txId.tx);
+        }).catch(function(e) {
+          self.setErrorStatus("Error switching flags: " + e);
+        });
+      }).catch(function(e) {
+        self.setErrorStatus("Error connecting to EtherBayFlag: " + e);
+      });
+    }).catch(function(e) {
+      self.setErrorStatus("Error connecting to EtherBay: " + e);
+    });
   }
 };
 
