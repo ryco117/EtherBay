@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="300" height="200" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+<script>
+
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+const w = c.width;
+const h = c.height;
+
+const x = w/2;
+const y = h/2;
+const radius = h/4;
+
+ctx.fillStyle = "#12100B";
+ctx.strokeStyle = "#000005";
+ctx.save();
+
+ctx.translate(x, y);
+
+// Ethereum Top-Half
+// Perimeter
+ctx.beginPath();
+ctx.moveTo(0, -0.9*radius);
+ctx.lineTo(-0.5*radius,0);
+ctx.lineTo(0, 0.289*radius);
+ctx.lineTo(0.5*radius,0);
+ctx.closePath();
+ctx.stroke();
+// Top-Left
+ctx.fillStyle = "#93928f";
+ctx.beginPath();
+ctx.moveTo(0, -0.9*radius);
+ctx.lineTo(-0.5*radius,0);
+ctx.lineTo(0, -0.289*radius);
+ctx.closePath();
+ctx.fill();
+// Top-Right
+ctx.fillStyle = "#43413e";
+ctx.beginPath();
+ctx.moveTo(0, -0.9*radius);
+ctx.lineTo(0.5*radius, 0);
+ctx.lineTo(0, -0.289*radius);
+ctx.closePath();
+ctx.fill();
+//Bottom-Left
+ctx.fillStyle = "#706e6c";
+ctx.beginPath();
+ctx.moveTo(0, 0.289*radius);
+ctx.lineTo(-0.5*radius,0);
+ctx.lineTo(0, -0.289*radius);
+ctx.closePath();
+ctx.fill();
+//Bottom-Right
+ctx.fillStyle = "#2d2b27";
+ctx.beginPath();
+ctx.moveTo(0, 0.289*radius);
+ctx.lineTo(0.5*radius,0);
+ctx.lineTo(0, -0.289*radius);
+ctx.closePath();
+ctx.fill();
+
+ctx.translate(0, 0.1*radius);
+// Ethereum Bottom-Half
+// Perimeter
+ctx.beginPath();
+ctx.moveTo(0, 0.7*radius);
+ctx.lineTo(-0.5*radius,0);
+ctx.lineTo(0, 0.289*radius);
+ctx.lineTo(0.5*radius,0);
+ctx.closePath();
+ctx.stroke();
+// Left
+ctx.fillStyle = "#949390";
+ctx.beginPath();
+ctx.moveTo(0, 0.7*radius);
+ctx.lineTo(-0.5*radius, 0);
+ctx.lineTo(0, 0.289*radius);
+ctx.closePath();
+ctx.fill();
+// Right
+ctx.fillStyle = "#43413e";
+ctx.beginPath();
+ctx.moveTo(0, 0.7*radius);
+ctx.lineTo(0.5*radius, 0);
+ctx.lineTo(0, 0.289*radius);
+ctx.closePath();
+ctx.fill();
+
+</script> 
+
+
+</body>
+</html>

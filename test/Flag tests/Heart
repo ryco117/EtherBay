@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="300" height="200" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+<script>
+
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+const w = c.width;
+const h = c.height;
+
+const x = w/2;
+const y = h/2;
+
+ctx.fillStyle = "#FF1F1F";
+ctx.strokeStyle = "#000000";
+ctx.save();
+
+ctx.translate(x, y - 0.05*h);
+
+// Heart
+ctx.moveTo(0, 0.25*h);
+ctx.bezierCurveTo(-0.05*h, 0.1*h, -0.2*h, 0.175*h, -0.225*h, 0);
+ctx.bezierCurveTo(-0.275*h, -0.175*h, 0, -0.25*h, 0, -0.05*h);
+ctx.bezierCurveTo(0, -0.25*h, 0.275*h, -0.175*h, 0.225*h, 0);
+ctx.bezierCurveTo(0.2*h, 0.175*h, 0.05*h, 0.1*h, 0, 0.25*h);
+ctx.fill();
+ctx.stroke();
+</script> 
+
+</body>
+</html>

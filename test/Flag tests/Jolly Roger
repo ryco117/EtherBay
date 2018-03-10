@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="300" height="200" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+<script>
+
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+const w = c.width/2;
+const h = c.height/2;
+
+const x = w;
+const y = h;
+
+ctx.fillStyle = "#f0f0f0";
+ctx.strokeStyle = "#000000";
+ctx.save();
+
+ctx.translate(x, y);
+
+// Cross Bones
+for (var i = 0; i < 4; i++) {
+ctx.beginPath();
+ctx.moveTo(0, 0.1*h);
+ctx.lineTo(-0.4*h, 0.5*h);
+ctx.bezierCurveTo(-0.3*h, 0.6*h, -0.575*h, 0.65*h, -0.5*h, 0.5*h);
+ctx.bezierCurveTo(-0.65*h, 0.575*h, -0.6*h, 0.3*h, -0.5*h, 0.4*h);
+ctx.lineTo(-0.1*h, 0);
+ctx.closePath();
+ctx.stroke();
+ctx.fill();
+
+ctx.rotate(Math.PI/2);
+}
+ctx.restore();
+
+// Skull Mouth
+ctx.translate(x, y + 0.125*h);
+ctx.beginPath();
+ctx.moveTo(-0.3*h, 0);
+ctx.bezierCurveTo(-0.3*h, 0.4*h, 0.3*h, 0.4*h, 0.3*h, 0);
+ctx.bezierCurveTo(0.3*h, 0.15*h, -0.3*h, 0.15*h, -0.3*h, 0);
+ctx.bezierCurveTo(-0.3*h, 0.275*h, 0.3*h, 0.275*h, 0.3*h, 0);
+ctx.bezierCurveTo(0.3*h, 0.15*h, -0.3*h, 0.15*h, -0.3*h, 0);
+ctx.bezierCurveTo(-0.3*h, 0.475*h, 0.3*h, 0.475*h, 0.3*h, 0);
+ctx.closePath();
+ctx.fill();
+ctx.stroke();
+//Teeth
+ctx.beginPath();
+ctx.moveTo(0, 0.3*h);
+ctx.lineTo(0, 0.1*h);
+ctx.moveTo(-0.15*h, 0.265*h);
+ctx.lineTo(-0.15*h, 0.075*h);
+ctx.moveTo(0.15*h, 0.265*h);
+ctx.lineTo(0.15*h, 0.075*h);
+ctx.stroke();
+
+// Skull Head
+ctx.beginPath();
+ctx.moveTo(-0.3*h, 0);
+ctx.bezierCurveTo(-0.6*h, -0.75*h, 0.6*h, -0.75*h, 0.3*h, 0);
+ctx.bezierCurveTo(0.3*h, 0.15*h, -0.3*h, 0.15*h, -0.3*h, 0);
+ctx.closePath();
+ctx.fill();
+ctx.stroke();
+// Eyes
+ctx.fillStyle = ctx.strokeStyle;
+ctx.beginPath();
+ctx.ellipse(-0.175*h, -0.175*h, 0.1*h, 0.075*h, Math.PI/10, 0, 2*Math.PI);
+ctx.ellipse(0.175*h, -0.175*h, 0.1*h, 0.075*h, -Math.PI/10, 0, 2*Math.PI);
+ctx.fill();
+ctx.beginPath();
+//Nose
+ctx.ellipse(0, -0.02*h, 0.05*h, 0.07*h, 0, 0, 2*Math.PI);
+ctx.fill();
+</script> 
+
+</body>
+</html>
+

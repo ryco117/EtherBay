@@ -23,6 +23,8 @@ var ipfsApi = require("ipfs-mini");
 
 // Import Flag Generation
 var flagGeneration = require("./flag-generation");
+var BigNumber = require('bignumber.js');
+
 
 window.App = {
   ipfs: {},
@@ -91,21 +93,74 @@ window.App = {
           flagCount = flagCount.toNumber();
           myFlagAmntElm.innerHTML = flagCount;
           if(flagCount) {
+            // Draw the primary flag in higher res
             etherBayFlags.tokenOfOwnerByIndex(account, 0).then(function(flagId) {
-              console.log("Primary Flag ID: 0x" + flagId.toString(16));
-              drawFlagToCanvas(flagId, "testCanvas");
+              const flagIdStr = flagId.toString(16);
+              console.log("Primary Flag ID: 0x" + flagIdStr);
+              flagGeneration.drawFlagToCanvas(flagIdStr, "mainCanvas");
             }).catch(function(e) {
               self.setErrorStatus("Error retrieving primary flag: " + e);
+            });
+
+            // Draw all owned flags
+            var flagPromises = [];
+            for(var i = 0; i < flagCount; i++) {
+              // Get promises to fetch all flag IDs
+              flagPromises.push(etherBayFlags.tokenOfOwnerByIndex(account, i));
+            }
+            var tableOfFlagsElm = document.getElementById("tableOfFlags");
+            Promise.all(flagPromises).then(function(flagIds) {
+              for(var i = 0; i < flagCount/2; i++) {
+                var newRow = tableOfFlagsElm.insertRow(i+1);
+                for(var j = 0; j < Math.min(flagCount - 2*i, 2); j++) {
+                  var newCanvasCell = newRow.insertCell(j);
+                  var flagId = flagIds[2*i + j].toString(16);
+                  var newCanvas = document.createElement('canvas');
+                  var newFunc = self.makeSwitchPrimaryFlagFunc(2*i + j);
+                  newCanvas.addEventListener('dblclick', newFunc);
+                  newCanvas.id = "newCanvas" + flagId;
+                  newCanvas.style = "border:1px solid #c3c3c3;";
+                  newCanvasCell.appendChild(newCanvas);
+                  flagGeneration.drawFlagToCanvas(flagId, newCanvas.id);
+                }
+              }
             });
           }
         }).catch(function(e) {
           self.setErrorStatus("Error retrieving your flags count: " + e);
         });
       }).catch(function(e) {
-        self.setErrorStatus("Error connecting to EtherBay: " + e);
+        self.setErrorStatus("Error connecting to EtherBayFlags: " + e);
       });
     }).then(() => {
       self.setStatus("");
+    }).catch(function(e) {
+      self.setErrorStatus("Error connecting to EtherBay: " + e);
+    });
+  },
+
+  makeSwitchPrimaryFlagFunc(flagIndex) {
+    var self = this;
+    return function() {
+      self.makeFlagPrimary(flagIndex);
+    };
+  },
+
+  makeFlagPrimary: function(flagWalletIndex) {
+    var self = this;
+
+    self.setStatus("Connecting to EtherBay contract...");
+    EtherBay.deployed().then(function(etherBay) {
+      etherBay.flagContract.call().then(function(flagAddr) {
+        var etherBayFlags = EtherBayFlag.at(flagAddr);
+        etherBayFlags.makePrimary(parseInt(flagWalletIndex), {from: account}).then(function(txId) {
+          self.setStatus("Success! Replaced primary flag at transaction: " + txId.tx);
+        }).catch(function(e) {
+          self.setErrorStatus("Error switching flags: " + e);
+        });
+      }).catch(function(e) {
+        self.setErrorStatus("Error connecting to EtherBayFlag: " + e);
+      });
     }).catch(function(e) {
       self.setErrorStatus("Error connecting to EtherBay: " + e);
     });
